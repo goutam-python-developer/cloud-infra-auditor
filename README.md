@@ -24,3 +24,7 @@ python -m app.main version
 python -m app.main scan ebs
 python -m app.main report export
 ```
+## Day 3: Boto3 + Credentials
+- Boto3 integrated
+- AWS credential handling implemented
+-Local AWS profiles support added

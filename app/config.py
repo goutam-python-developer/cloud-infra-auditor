@@ -56,3 +56,20 @@ def assume_role(session,role_arn:str):
     except Exceptionas as e:
         console.print(f"[red]Role assume failed:{str(e)}[/red]")           
         return None
+
+
+
+def get_local_profiles():
+    """
+    Day 5: Local machine 
+    AWS profiles list 
+    """
+    try:
+        session = boto3.Session()
+        profiles = session.available_profiles
+        console.print(f"[green]Local Profiles found: {profiles}[/green]")
+        return profiles
+
+    except Exception as e:
+        console.print(f"[red]Profiles not found: {str(e)}[/red]")
+        return []

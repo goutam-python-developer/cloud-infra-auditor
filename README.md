@@ -28,3 +28,13 @@ python -m app.main report export
 - Boto3 integrated
 - AWS credential handling implemented
 -Local AWS profiles support added
+
+
+
+### Day 4: Assume Role 
+- AWS role assuming functionality add 
+- Multiple AWS accounts support
+
+### Day 5: Local AWS Profiles 
+- Local machine  AWS profiles list 
+- get_local_profiles() function 

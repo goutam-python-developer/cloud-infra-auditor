@@ -33,3 +33,26 @@ def get_aws_session(profile:str="default",region: str ="us-east-1"):
     except Exceptionas as e:
         console.print(f"[red] Error : {str(e)}[/red]")           
         return None
+
+def assume_role(session,role_arn:str):
+    """
+    Day 4: Assume AWS account
+    """
+
+    try:
+        sts =session.client("sts")
+        response= sts.assume_role(
+            RoleArn=role_arn,
+            RoleSessionName="CloudAuditorSession"
+        )
+        credentials=response["Credentials"]
+        new_session= boto3.Session(
+            aws_access_key_id=credentials["AccessKeyId"],
+            aws_secret_access_key=credentials["SecretAccessKey"],
+            aws_session_token=credentials["SessionToken"]
+        )
+        console.print(f"[green]Role Assume![/green]")
+        return new_session
+    except Exceptionas as e:
+        console.print(f"[red]Role assume failed:{str(e)}[/red]")           
+        return None

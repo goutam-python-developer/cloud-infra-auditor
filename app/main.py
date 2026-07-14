@@ -4,15 +4,15 @@ Cloud Infrastructure Auditor & Cost Optimizer (CLI)
 -----------------------------------------------------
 Entry point for the CLI application.
 
-Week 1 - Day 1-5:
-- Setup CLI framework using Typer
-- Boto3+ Credential connected
+Week 1 - Day 1-7 Complete:
+CLI + Boto3 + Credential+ Regions
 """
 
 import typer
 from rich.console import Console
 from app.commands import scan, report
-from app.config import grt_aws_session, assume_role, get_local_profiles
+from app.config import get_aws_session, assume_role, get_local_profiles
+from app.regions import get_all_regions, safe_api_call
 
 # Main Typer app object
 app = typer.Typer(
@@ -56,10 +56,40 @@ def profiles():
 
 
 @app.command()
+def regions(
+    profile: str = typer.Option("default", help="AWS Profile naam")
+):
+    """Day 6: All AWS regions fetch ."""
+    console.print("[cyan] Regions fetch are processing...[/cyan]")
+    session = get_aws_session(profile=profile)
+    if session:
+        all_regions = get_all_regions(session)
+        console.print(f"[green] Regions: {all_regions}[/green]")
+    else:
+        console.print("[red] Session fail![/red]")
+
+@app.command()
 def hello():
     
     console.print("[bold cyan] CLI framework is up and running![/bold cyan]")
 
+@app.command()
+def test_api():
+    """
+    Day 7: API rate limit handler test .
+    """
+    console.print("[cyan]API Rate Limit Handler Test processing...[/cyan]")
+    
+    def sample_call():
+        console.print("[green] API Call successful![/green]")
+        return "success"
+    
+    result = safe_api_call(sample_call)
+    
+    if result:
+        console.print("[green]safe_api_call are working![/green]")
+    else:
+        console.print("[red] API call fail![/red]")
 
 if __name__ == "__main__":
     app()

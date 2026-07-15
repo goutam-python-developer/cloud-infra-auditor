@@ -6,6 +6,10 @@ Entry point for the CLI application.
 
 Week 1 - Day 1-7 Complete:
 CLI + Boto3 + Credential+ Regions
+
+
+week 2 - Day 1-2 
+EBS+ Elastic IP scanning added
 """
 
 import typer
@@ -31,6 +35,11 @@ app.add_typer(report.report_app, name="report", help="Generate and export cost-s
 def version():
     console.print("[bold green]Cloud Infrastructure Auditor[/bold green] - v0.1.0 ")
 
+
+@app.command()
+def hello():
+    "show current version."
+    console.print("[bold cyan]CLI is running ![/bold cyan]")
 
 @app.command()
 def connect(
@@ -69,15 +78,7 @@ def regions(
         console.print("[red] Session fail![/red]")
 
 @app.command()
-def hello():
-    
-    console.print("[bold cyan] CLI framework is up and running![/bold cyan]")
-
-@app.command()
 def test_api():
-    """
-    Day 7: API rate limit handler test .
-    """
     console.print("[cyan]API Rate Limit Handler Test processing...[/cyan]")
     
     def sample_call():

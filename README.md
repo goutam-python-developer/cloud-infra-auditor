@@ -48,6 +48,13 @@ python -m app.main report export
 - Auto retry logic added
 - safe_api_call() function 
 
+
+## Week 2 Progress 
+
+### Day 1: EBS Scanning 
+- scanner.py 
+- Unattached EBS volumes scan 
+
 ## Project Structure
 
 cloud-infra-auditor/

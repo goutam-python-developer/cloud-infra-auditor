@@ -55,6 +55,23 @@ python -m app.main report export
 - scanner.py 
 - Unattached EBS volumes scan 
 
+## Day 2: Elastic IP Scanning
+
+- Idle Elastic IPs scan 
+- scan.py command added
+
+## Day 3:Full Resource Scan 
+- EBS and EIP scanning both
+- scan_all_resources() function create
+-scan all command added
+- scan_all_command also in main.py
+
+
+
+
+
+
+
 ## Project Structure
 
 cloud-infra-auditor/

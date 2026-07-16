@@ -91,6 +91,24 @@ def test_api():
         console.print("[green]safe_api_call are working![/green]")
     else:
         console.print("[red] API call fail![/red]")
+@app.command()
+def scan_all(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Day 3: directly full scan to main.
+    """
+    from app.scanner import scan_all_resources
+    console.print("[cyan] Full Scan main start[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        results = scan_all_resources(session, region)
+        console.print(f"[yellow]EBS: {len(results['ebs'])} | EIP: {len(results['eip'])}[/yellow]")
+    else:
+        console.print("[red] Session fail![/red]")
+
+
 
 if __name__ == "__main__":
     app()

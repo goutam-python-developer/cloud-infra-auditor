@@ -59,3 +59,21 @@ def scan_ec2():
     EC2 instances scan .
     """
     console.print("[yellow] EC2 scanning  added in Day 4-6 .[/yellow]")
+
+@scan_app.command("all")
+def scan_all(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Day 3: EBS and EIP starting both.
+    """
+    console.print("[cyan] Full Scan sarting[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        from app.scanner import scan_all_resources
+        results = scan_all_resources(session, region)
+        console.print(f"[yellow] Total EBS: {len(results['ebs'])}[/yellow]")
+        console.print(f"[yellow]Total EIP: {len(results['eip'])}[/yellow]")
+    else:
+        console.print("[red] Session fail![/red]")    

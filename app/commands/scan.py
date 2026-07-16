@@ -7,7 +7,7 @@ EBS aur Elastic IP scan commands
 
 import typer
 from rich.console import Console
-from app.scanner import scan_unattached_ebs, scan_unassociated_eip
+
 from app.config import get_aws_session
 
 scan_app = typer.Typer(help="Scan AWS resources for waste.")

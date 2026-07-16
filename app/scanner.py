@@ -67,3 +67,186 @@ def scan_all_resources(session, region: str = "us-east-1"):
     console.print(f"[red]EIP Issues: {len(results['eip'])}[/red]")
 
     return results
+
+
+def scan_underutilized_ec2(session, region: str = "us-east-1"):
+    """
+    Day 4: EC2 instances scan 
+    sub-5% CPU using
+     check  CloudWatch 
+    """
+    console.print(f"[cyan] EC2 Instances scan: {region}[/cyan]")
+
+    try:
+        ec2 = session.client("ec2", region_name=region)
+        cloudwatch = session.client("cloudwatch", region_name=region)
+
+        # Saare running instances lo
+        response = ec2.describe_instances(
+            Filters=[{"Name": "instance-state-name", "Values": ["running"]}]
+        )
+
+        underutilized = []
+
+        for reservation in response["Reservations"]:
+            for instance in reservation["Instances"]:
+                instance_id = instance["InstanceId"]
+                instance_type = instance["InstanceType"]
+
+                # CloudWatch se CPU usage lo
+                import datetime
+                end_time = datetime.datetime.utcnow()
+                start_time = end_time - datetime.timedelta(days=14)
+
+                metrics = cloudwatch.get_metric_statistics(
+                    Namespace="AWS/EC2",
+                    MetricName="CPUUtilization",
+                    Dimensions=[
+                        {"Name": "InstanceId", "Value": instance_id}
+                    ],
+                    StartTime=start_time,
+                    EndTime=end_time,
+                    Period=86400,
+                    Statistics=["Average"]
+                )
+
+                # Average CPU calculate karo
+                if metrics["Datapoints"]:
+                    avg_cpu = sum(
+                        d["Average"] for d in metrics["Datapoints"]
+                    ) / len(metrics["Datapoints"])
+                else:
+                    avg_cpu = 0.0
+
+                # Sub 5% CPU wale flag karo
+                if avg_cpu < 5.0:
+                    underutilized.append({
+                        "InstanceId": instance_id,
+                        "InstanceType": instance_type,
+                        "AvgCPU": round(avg_cpu, 2),
+                        "Region": region,
+                    })
+
+        if underutilized:
+            console.print(f"[red] {len(underutilized)} underutilized EC2 found![/red]")
+        else:
+            console.print("[green] underutilized EC2 not found![/green]")
+
+        return underutilized
+
+    except Exception as e:
+        console.print(f"[red]EC2 Scan Error: {str(e)}[/red]")
+        return []
+
+
+
+def scan_ec2_detailed(session, region: str = "us-east-1"):
+    """
+    Day 5: EC2 instances ka detailed scan .
+    14 days  CPU data check .
+    """
+    console.print(f"[cyan]EC2 Detailed Scan: {region}[/cyan]")
+
+    try:
+        ec2 = session.client("ec2", region_name=region)
+        cloudwatch = session.client("cloudwatch", region_name=region)
+
+        response = ec2.describe_instances(
+            Filters=[{"Name": "instance-state-name", "Values": ["running"]}]
+        )
+
+        detailed_results = []
+
+        for reservation in response["Reservations"]:
+            for instance in reservation["Instances"]:
+                instance_id = instance["InstanceId"]
+                instance_type = instance["InstanceType"]
+
+                # Instance ka naam lo
+                name = "N/A"
+                if "Tags" in instance:
+                    for tag in instance["Tags"]:
+                        if tag["Key"] == "Name":
+                            name = tag["Value"]
+
+                import datetime
+                end_time = datetime.datetime.utcnow()
+                start_time = end_time - datetime.timedelta(days=14)
+
+                # CPU Utilization
+                cpu_metrics = cloudwatch.get_metric_statistics(
+                    Namespace="AWS/EC2",
+                    MetricName="CPUUtilization",
+                    Dimensions=[
+                        {"Name": "InstanceId", "Value": instance_id}
+                    ],
+                    StartTime=start_time,
+                    EndTime=end_time,
+                    Period=86400,
+                    Statistics=["Average", "Maximum"]
+                )
+
+                avg_cpu = 0.0
+                max_cpu = 0.0
+
+                if cpu_metrics["Datapoints"]:
+                    avg_cpu = sum(
+                        d["Average"] for d in cpu_metrics["Datapoints"]
+                    ) / len(cpu_metrics["Datapoints"])
+                    max_cpu = max(
+                        d["Maximum"] for d in cpu_metrics["Datapoints"]
+                    )
+
+                detailed_results.append({
+                    "InstanceId": instance_id,
+                    "InstanceType": instance_type,
+                    "Name": name,
+                    "AvgCPU": round(avg_cpu, 2),
+                    "MaxCPU": round(max_cpu, 2),
+                    "Region": region,
+                    "Underutilized": avg_cpu < 5.0
+                })
+
+        # Summary print karo
+        underutilized_count = sum(
+            1 for r in detailed_results if r["Underutilized"]
+        )
+        console.print(f"[yellow]Total EC2: {len(detailed_results)}[/yellow]")
+        console.print(f"[red] Underutilized: {underutilized_count}[/red]")
+
+        return detailed_results
+
+    except Exception as e:
+        console.print(f"[red] EC2 Detailed Scan Error: {str(e)}[/red]")
+        return []
+
+
+
+def scan_all_ec2_regions(session, regions: list = None):
+    """
+    Day 6: Multiple regions  EC2 scan .
+    CloudWatch sub-5% CPU instances finding.
+    """
+    console.print("[cyan]Multi-Region EC2 Scan starting.[/cyan]")
+
+    if regions is None:
+        regions = [
+            "us-east-1",
+            "us-west-2",
+            "eu-west-1",
+            "ap-south-1"
+        ]
+
+    all_results = {}
+
+    for region in regions:
+        console.print(f"[cyan] Region scannig: {region}[/cyan]")
+        results = scan_underutilized_ec2(session, region)
+        all_results[region] = results
+
+    # Final Summary
+    total = sum(len(v) for v in all_results.values())
+    console.print(f"[yellow] Total Underutilized EC2: {total}[/yellow]")
+
+    return all_results
+

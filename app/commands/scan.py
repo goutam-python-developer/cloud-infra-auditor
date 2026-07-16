@@ -52,13 +52,8 @@ def scan_eip(
         console.print("[red] Session fail![/red]")
 
 
-@scan_app.command("ec2")
-def scan_ec2():
-    """
-    Day 4-6  implement.
-    EC2 instances scan .
-    """
-    console.print("[yellow] EC2 scanning  added in Day 4-6 .[/yellow]")
+
+
 
 @scan_app.command("all")
 def scan_all(
@@ -77,3 +72,76 @@ def scan_all(
         console.print(f"[yellow]Total EIP: {len(results['eip'])}[/yellow]")
     else:
         console.print("[red] Session fail![/red]")    
+
+@scan_app.command("ec2")
+def scan_ec2(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Day 4: Underutilized EC2 instances scan .
+    """
+    console.print("[cyan] EC2 Scan starting.[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        from app.scanner import scan_underutilized_ec2
+        results = scan_underutilized_ec2(session, region)
+        if results:
+            for ec2 in results:
+                console.print(
+                    f"[red]Instance: {ec2['InstanceId']} | "
+                    f"Type: {ec2['InstanceType']} | "
+                    f"CPU: {ec2['AvgCPU']}%[/red]"
+                )
+        else:
+            console.print("[green]underutilized EC2 not found![/green]")
+    else:
+        console.print("[red] Session fail![/red]")
+
+@scan_app.command("ec2-detailed")
+def scan_ec2_detailed(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """Day 5: EC2 ka detailed scan starting"""
+    console.print("[cyan]EC2 Detailed Scan starting.[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        from app.scanner import scan_ec2_detailed
+        results = scan_ec2_detailed(session, region)
+        if results:
+            for ec2 in results:
+                status = " Underutilized" if ec2["Underutilized"] else " Normal"
+                console.print(
+                    f"[cyan]Instance: {ec2['InstanceId']} | "
+                    f"Name: {ec2['Name']} | "
+                    f"Type: {ec2['InstanceType']} | "
+                    f"Avg CPU: {ec2['AvgCPU']}% | "
+                    f"Max CPU: {ec2['MaxCPU']}% | "
+                    f"{status}[/cyan]"
+                )
+        else:
+            console.print("[green] EC2 not found![/green]")
+    else:
+        console.print("[red] Session fail![/red]")
+
+
+
+@scan_app.command("ec2-regions")
+def scan_ec2_regions(
+    profile: str = typer.Option("default", help="AWS Profile"),
+):
+    """Day 6: Multiple regions me EC2 scan """
+    console.print("[cyan] Multi-Region EC2 Scan starting[/cyan]")
+    session = get_aws_session(profile=profile)
+    if session:
+        from app.scanner import scan_all_ec2_regions
+        results = scan_all_ec2_regions(session)
+        for region, instances in results.items():
+            console.print(
+                f"[yellow]Region: {region} | "
+                f"Underutilized: {len(instances)}[/yellow]"
+            )
+    else:
+        console.print("[red] Session fail![/red]")
+

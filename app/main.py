@@ -108,7 +108,44 @@ def scan_all(
     else:
         console.print("[red] Session fail![/red]")
 
+@app.command()
+def ec2_detailed(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Day 5: EC2 detailed scanning in main.
+    """
+    from app.scanner import scan_ec2_detailed
+    console.print("[cyan] EC2 Detailed Scan starting[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        results = scan_ec2_detailed(session, region)
+        console.print(f"[yellow]Total EC2: {len(results)}[/yellow]")
+        underutilized = [r for r in results if r["Underutilized"]]
+        console.print(f"[red]Underutilized: {len(underutilized)}[/red]")
+    else:
+        console.print("[red] Session fail![/red]")
 
+@app.command()
+def ec2_regions(
+    profile: str = typer.Option("default", help="AWS Profile")
+):
+    """
+    Day 6: Multiple regions scanning in EC2 .
+    """
+    from app.scanner import scan_all_ec2_regions
+    console.print("[cyan] Multi-Region EC2 Scanning.[/cyan]")
+    session = get_aws_session(profile=profile)
+    if session:
+        results = scan_all_ec2_regions(session)
+        for region, instances in results.items():
+            console.print(
+                f"[yellow]Region: {region} | "
+                f"Underutilized EC2: {len(instances)}[/yellow]"
+            )
+    else:
+        console.print("[red] Session fail![/red]")        
 
 if __name__ == "__main__":
     app()

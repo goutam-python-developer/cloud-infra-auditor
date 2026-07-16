@@ -67,6 +67,27 @@ python -m app.main report export
 - scan_all_command also in main.py
 
 
+### Day 4: EC2 Scanning with CloudWatch ✅
+- EC2 instances scan 
+- CPU utilization check through CloudWatch 
+- Sub 5% CPU  instances detect 
+- scan_underutilized_ec2() function created
+
+
+### Day 5: EC2 Detailed Scan ✅
+- 14 days CPU data check 
+- Average and Maximum CPU fetched
+- Instance name and  type detected
+- scan_ec2_detailed() function created
+- ec2-detailed command added
+
+
+### Day 6: Multi-Region EC2 Scan ✅
+- EC2 scanning Multiple AWS regions
+- every region  stored different result
+- scan_all_ec2_regions() function created
+- ec2-regions command added
+
 
 
 

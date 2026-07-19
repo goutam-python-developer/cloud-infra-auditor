@@ -145,7 +145,36 @@ def ec2_regions(
                 f"Underutilized EC2: {len(instances)}[/yellow]"
             )
     else:
-        console.print("[red] Session fail![/red]")        
+        console.print("[red] Session fail![/red]") 
+
+@app.command()
+def store_all(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Day 7: All scan data store 
+    """
+    from app.scanner import (
+        scan_unattached_ebs,
+        scan_unassociated_eip,
+        scan_underutilized_ec2,
+        store_scan_results
+    )
+    console.print("[cyan] Full Scan and Store starting[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        ebs = scan_unattached_ebs(session, region)
+        eip = scan_unassociated_eip(session, region)
+        ec2 = scan_underutilized_ec2(session, region)
+        data = store_scan_results(ebs, eip, ec2, region)
+        console.print(
+            f"[green] Data Stored! "
+            f"Total Issues: {data['metadata']['total_issues']}[/green]"
+        )
+    else:
+        console.print("[red] Session fail![/red]")
+
 
 if __name__ == "__main__":
     app()

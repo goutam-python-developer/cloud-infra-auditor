@@ -250,3 +250,41 @@ def scan_all_ec2_regions(session, regions: list = None):
 
     return all_results
 
+def store_scan_results(ebs_results, eip_results, ec2_results, region):
+    """
+    Day 7: All scan data store Python dictionary structured
+    """
+    console.print("[cyan]Scan data store starting..[/cyan]")
+
+    scan_data = {
+        "metadata": {
+            "region": region,
+            "total_issues": (
+                len(ebs_results) +
+                len(eip_results) +
+                len(ec2_results)
+            ),
+            "summary": {
+                "unattached_ebs": len(ebs_results),
+                "idle_eips": len(eip_results),
+                "underutilized_ec2": len(ec2_results),
+            }
+        },
+        "ebs_volumes": ebs_results,
+        "elastic_ips": eip_results,
+        "ec2_instances": ec2_results,
+    }
+
+    # Summary print karo
+    console.print("[green] Scan data successfully stored![/green]")
+    console.print(
+        f"[yellow] Total Issues Found: "
+        f"{scan_data['metadata']['total_issues']}[/yellow]"
+    )
+    console.print(
+        f"[red]EBS: {scan_data['metadata']['summary']['unattached_ebs']} | "
+        f"EIP: {scan_data['metadata']['summary']['idle_eips']} | "
+        f"EC2: {scan_data['metadata']['summary']['underutilized_ec2']}[/red]"
+    )
+
+    return scan_data

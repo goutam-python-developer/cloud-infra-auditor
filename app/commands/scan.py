@@ -145,3 +145,36 @@ def scan_ec2_regions(
     else:
         console.print("[red] Session fail![/red]")
 
+
+
+@scan_app.command("store")
+def store_results(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Day 7: All scan data store in  dictionary 
+    """
+    console.print("[cyan] Full Scan and  Data Store starting[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        from app.scanner import (
+            scan_unattached_ebs,
+            scan_unassociated_eip,
+            scan_underutilized_ec2,
+            store_scan_results
+        )
+
+        # Saare scans run karo
+        ebs = scan_unattached_ebs(session, region)
+        eip = scan_unassociated_eip(session, region)
+        ec2 = scan_underutilized_ec2(session, region)
+
+        # Data store karo
+        data = store_scan_results(ebs, eip, ec2, region)
+
+        # Final output
+        console.print("[green]Data stored successfully![/green]")
+        console.print(f"[yellow]Total Issues: {data['metadata']['total_issues']}[/yellow]")
+    else:
+        console.print("[red] Session fail![/red]")

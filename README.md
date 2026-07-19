@@ -88,7 +88,11 @@ python -m app.main report export
 - scan_all_ec2_regions() function created
 - ec2-regions command added
 
-
+### Day 7: Scan Data Storage ✅
+- All scan data store in  Python dictionaries 
+- Structured metadata with region and summary
+- EBS, EIP, EC2 results aggregated
+- store_scan_results() function created
 
 
 
@@ -102,6 +106,7 @@ cloud-infra-auditor/
     ├── main.py
     ├── config.py
     ├── regions.py
+    ├── scanner.py
     └── commands/
         ├── scan.py
         └── report.py
@@ -110,14 +115,27 @@ cloud-infra-auditor/
 pip install -r requirements.txt
 
 ## Run Commands
+### Main Commands
 python -m app.main --help
 python -m app.main hello
 python -m app.main version
 python -m app.main connect
 python -m app.main profiles
 python -m app.main regions
+python -m app.main test-api
+python -m app.main scan-all
+python -m app.main ec2-detailed
+python -m app.main ec2-regions
+python -m app.main store-all
+
+### scan commands
 python -m app.main scan ebs
 python -m app.main scan eip
+python -m app.main scan all
 python -m app.main scan ec2
+python -m app.main scan ec2-detailed
+python -m app.main scan ec2-regions
+
+### Report commands
 python -m app.main report export
 python -m app.main report summary

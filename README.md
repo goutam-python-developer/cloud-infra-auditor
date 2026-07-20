@@ -139,3 +139,13 @@ python -m app.main scan ec2-regions
 ### Report commands
 python -m app.main report export
 python -m app.main report summary
+
+### Day 1-3: Rich Library Reports
+
+### Day 1: Rich Library Tables ✅
+- Rich library  beautiful formatted tables creating
+- EBS, EIP, EC2  showing in differen  tables 
+- Summary table create
+- show report command adding
+- generate_report_data() function creating
+

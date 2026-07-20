@@ -288,3 +288,24 @@ def store_scan_results(ebs_results, eip_results, ec2_results, region):
     )
 
     return scan_data
+
+
+
+def generate_report_data(session, region: str = "us-east-1"):
+    """
+    Day 1: collecting all data for report.
+    EBS, EIP and EC2 scanning and store in 
+    structured dictionary .
+    """
+    console.print(f"[cyan]Report data collecting {region}[/cyan]")
+
+    # Saare scans run karo
+    ebs = scan_unattached_ebs(session, region)
+    eip = scan_unassociated_eip(session, region)
+    ec2 = scan_underutilized_ec2(session, region)
+
+    # Data store karo
+    report_data = store_scan_results(ebs, eip, ec2, region)
+
+    console.print("[green] Report data ready![/green]")
+    return report_data    

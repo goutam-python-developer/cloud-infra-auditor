@@ -176,6 +176,33 @@ def store_all(
         console.print("[red] Session fail![/red]")
 
 
+@app.command()
+def show_report(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Week 3 Day 1:  Show report in Rich tables.
+    """
+    from app.scanner import generate_report_data
+    from app.commands.report import (
+        print_ebs_table,
+        print_eip_table,
+        print_ec2_table,
+        print_summary_table
+    )
+    console.print("[cyan] Report generating starting[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        report_data = generate_report_data(session, region)
+        print_ebs_table(report_data["ebs_volumes"])
+        print_eip_table(report_data["elastic_ips"])
+        print_ec2_table(report_data["ec2_instances"])
+        print_summary_table(report_data)
+    else:
+        console.print("[red]Session fail![/red]")
+
+
 if __name__ == "__main__":
     app()
 main.py

@@ -67,14 +67,14 @@ python -m app.main report export
 - scan_all_command also in main.py
 
 
-### Day 4: EC2 Scanning with CloudWatch ✅
+### Day 4: EC2 Scanning with CloudWatch 
 - EC2 instances scan 
 - CPU utilization check through CloudWatch 
 - Sub 5% CPU  instances detect 
 - scan_underutilized_ec2() function created
 
 
-### Day 5: EC2 Detailed Scan ✅
+### Day 5: EC2 Detailed Scan 
 - 14 days CPU data check 
 - Average and Maximum CPU fetched
 - Instance name and  type detected
@@ -82,13 +82,13 @@ python -m app.main report export
 - ec2-detailed command added
 
 
-### Day 6: Multi-Region EC2 Scan ✅
+### Day 6: Multi-Region EC2 Scan 
 - EC2 scanning Multiple AWS regions
 - every region  stored different result
 - scan_all_ec2_regions() function created
 - ec2-regions command added
 
-### Day 7: Scan Data Storage ✅
+### Day 7: Scan Data Storage 
 - All scan data store in  Python dictionaries 
 - Structured metadata with region and summary
 - EBS, EIP, EC2 results aggregated
@@ -141,7 +141,6 @@ python -m app.main report export
 python -m app.main report summary
 
 ### Day 1-3: Rich Library Reports
-
 ### Day 1: Rich Library Tables ✅
 - Rich library  beautiful formatted tables creating
 - EBS, EIP, EC2  showing in differen  tables 
@@ -149,3 +148,10 @@ python -m app.main report summary
 - show report command adding
 - generate_report_data() function creating
 
+### Day 2: Cost Savings Table 
+- Cost savings calculated
+- EBS, EIP, EC2 estimated savings
+- Showing cost savings in Rich table 
+- estimate_cost_savings() function created
+- costs command adding
+- show-costs command add in  main.py 

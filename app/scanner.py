@@ -308,4 +308,51 @@ def generate_report_data(session, region: str = "us-east-1"):
     report_data = store_scan_results(ebs, eip, ec2, region)
 
     console.print("[green] Report data ready![/green]")
-    return report_data    
+    return report_data  
+
+
+def estimate_cost_savings(report_data):
+    """
+    Day 2: calculate the all resource cost saving .
+    """
+    console.print("[cyan] Cost savings calculating[/cyan]")
+
+    # Average AWS pricing estimates
+    EBS_COST_PER_GB = 0.10      # $0.10 per GB per month
+    EIP_COST_PER_IP = 3.60      # $3.60 per idle IP per month
+    EC2_COST_PER_INSTANCE = 50  # ~$50 per underutilized instance
+
+    savings = {
+        "ebs_savings": 0.0,
+        "eip_savings": 0.0,
+        "ec2_savings": 0.0,
+        "total_savings": 0.0
+    }
+
+    # EBS savings
+    for ebs in report_data["ebs_volumes"]:
+        savings["ebs_savings"] += ebs["Size"] * EBS_COST_PER_GB
+
+    # EIP savings
+    savings["eip_savings"] = (
+        len(report_data["elastic_ips"]) * EIP_COST_PER_IP
+    )
+
+    # EC2 savings
+    savings["ec2_savings"] = (
+        len(report_data["ec2_instances"]) * EC2_COST_PER_INSTANCE
+    )
+
+    # Total savings
+    savings["total_savings"] = (
+        savings["ebs_savings"] +
+        savings["eip_savings"] +
+        savings["ec2_savings"]
+    )
+
+    console.print(
+        f"[green] Total Estimated Savings: "
+        f"${savings['total_savings']:.2f}/month[/green]"
+    )
+
+    return savings      

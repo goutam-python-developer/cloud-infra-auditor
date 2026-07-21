@@ -202,6 +202,25 @@ def show_report(
     else:
         console.print("[red]Session fail![/red]")
 
+@app.command()
+def show_costs(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Week 3 Day 2: Cost savings table showing
+    """
+    from app.scanner import generate_report_data, estimate_cost_savings
+    from app.commands.report import print_cost_savings_table
+    console.print("[cyan] Cost Savings Reporting[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        report_data = generate_report_data(session, region)
+        savings = estimate_cost_savings(report_data)
+        print_cost_savings_table(savings)
+    else:
+        console.print("[red] Session fail![/red]")
+
 
 if __name__ == "__main__":
     app()

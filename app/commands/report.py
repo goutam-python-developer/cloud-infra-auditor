@@ -169,3 +169,58 @@ def summary_report():
     Day 1: show Summary table 
     """
     console.print("[yellow] Summary adding in Week 3 Day 4-5  .[/yellow]")
+
+
+
+def print_cost_savings_table(savings):
+    """
+    Day 2: Cost savings print in   Rich table 
+    """
+    table = Table(
+        title=" Estimated Monthly Cost Savings",
+        box=box.ROUNDED,
+        show_header=True,
+        header_style="bold green"
+    )
+
+    table.add_column("Resource Type", style="cyan")
+    table.add_column("Estimated Savings/Month", style="green")
+
+    table.add_row(
+        "Unattached EBS Volumes",
+        f"${savings['ebs_savings']:.2f}"
+    )
+    table.add_row(
+        "Idle Elastic IPs",
+        f"${savings['eip_savings']:.2f}"
+    )
+    table.add_row(
+        "Underutilized EC2",
+        f"${savings['ec2_savings']:.2f}"
+    )
+    table.add_row(
+        " Total Savings",
+        f"${savings['total_savings']:.2f}"
+    )
+
+    console.print(table)
+
+
+@report_app.command("costs")
+def show_cost_savings(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Day 2: Cost savings table show.
+    """
+    console.print("[cyan] Cost Savings calculating[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+
+    if session:
+        from app.scanner import generate_report_data, estimate_cost_savings
+        report_data = generate_report_data(session, region)
+        savings = estimate_cost_savings(report_data)
+        print_cost_savings_table(savings)
+    else:
+        console.print("[red] Session fail![/red]")    

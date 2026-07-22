@@ -356,3 +356,30 @@ def estimate_cost_savings(report_data):
     )
 
     return savings      
+
+
+
+def generate_full_report(session, region: str = "us-east-1"):
+    """
+    Day 3: Complete report generate .
+    All  data + cost savings .
+    """
+    console.print(f"[cyan] Full Report generating: {region}[/cyan]")
+
+    # data All collect 
+    report_data = generate_report_data(session, region)
+
+    # Cost savings calculate karo
+    savings = estimate_cost_savings(report_data)
+
+    # Full report dictionary
+    full_report = {
+        "metadata": report_data["metadata"],
+        "ebs_volumes": report_data["ebs_volumes"],
+        "elastic_ips": report_data["elastic_ips"],
+        "ec2_instances": report_data["ec2_instances"],
+        "cost_savings": savings
+    }
+
+    console.print("[green] Full Report Ready![/green]")
+    return full_report

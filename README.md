@@ -141,7 +141,7 @@ python -m app.main report export
 python -m app.main report summary
 
 ### Day 1-3: Rich Library Reports
-### Day 1: Rich Library Tables ✅
+### Day 1: Rich Library Tables
 - Rich library  beautiful formatted tables creating
 - EBS, EIP, EC2  showing in differen  tables 
 - Summary table create
@@ -155,3 +155,13 @@ python -m app.main report summary
 - estimate_cost_savings() function created
 - costs command adding
 - show-costs command add in  main.py 
+
+
+### Day 3: Full Report Generator 
+-  showing all  report together generate 
+- EBS + EIP + EC2 + Cost Savings tables
+- generate_full_report() function created
+- print_full_report() function created
+- full report command adding 
+- full-report command added in  main.py 
+

@@ -224,3 +224,56 @@ def show_cost_savings(
         print_cost_savings_table(savings)
     else:
         console.print("[red] Session fail![/red]")    
+
+
+
+def print_full_report(full_report):
+    """
+    Day 3: print all  report.
+    Showing all tables .
+    """
+    console.print("\n")
+    console.rule("[bold cyan] Cloud Infrastructure Audit Report[/bold cyan]")
+    console.print("\n")
+
+    # EBS Table
+    print_ebs_table(full_report["ebs_volumes"])
+    console.print("\n")
+
+    # EIP Table
+    print_eip_table(full_report["elastic_ips"])
+    console.print("\n")
+
+    # EC2 Table
+    print_ec2_table(full_report["ec2_instances"])
+    console.print("\n")
+
+    # Summary Table
+    print_summary_table(full_report)
+    console.print("\n")
+
+    # Cost Savings Table
+    print_cost_savings_table(full_report["cost_savings"])
+    console.print("\n")
+
+    console.rule("[bold green]Report Complete[/bold green]")
+
+
+@report_app.command("full")
+def full_report(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Day 3: showing  full report.
+    EBS + EIP + EC2 + Cost Savings.
+    """
+    console.print("[cyan] Full Report generating...[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+
+    if session:
+        from app.scanner import generate_full_report
+        full_report_data = generate_full_report(session, region)
+        print_full_report(full_report_data)
+    else:
+        console.print("[red]Session fail![/red]")

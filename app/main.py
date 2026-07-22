@@ -222,6 +222,25 @@ def show_costs(
         console.print("[red] Session fail![/red]")
 
 
+@app.command()
+def full_report(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region")
+):
+    """
+    Week 3 Day 3: show  fully report.
+    """
+    from app.scanner import generate_full_report
+    from app.commands.report import print_full_report
+    console.print("[cyan] Full Report generating...[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        full_report_data = generate_full_report(session, region)
+        print_full_report(full_report_data)
+    else:
+        console.print("[red]Session fail![/red]")
+
+
 if __name__ == "__main__":
     app()
 main.py

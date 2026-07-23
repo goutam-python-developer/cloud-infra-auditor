@@ -163,5 +163,13 @@ python -m app.main report summary
 - generate_full_report() function created
 - print_full_report() function created
 - full report command adding 
-- full-report command added in  main.py 
+- full-report command added in main.py 
+
+### Day 4: CSV Export 
+- Scan results export in  CSV files 
+- EBS, EIP, EC2 different  CSV files
+- prepare_csv_data() function created
+- export_to_csv() function created
+- export-csv command adding
+- Reports folder automatically created
 

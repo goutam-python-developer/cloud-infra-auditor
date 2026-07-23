@@ -369,7 +369,7 @@ def generate_full_report(session, region: str = "us-east-1"):
     # data All collect 
     report_data = generate_report_data(session, region)
 
-    # Cost savings calculate karo
+    # Cost savings calculate 
     savings = estimate_cost_savings(report_data)
 
     # Full report dictionary
@@ -383,3 +383,45 @@ def generate_full_report(session, region: str = "us-east-1"):
 
     console.print("[green] Full Report Ready![/green]")
     return full_report
+
+
+def prepare_csv_data(full_report):
+    """
+    Day 4: Data prepare for CSV export .
+    """
+    console.print("[cyan] CSV data preparing[/cyan]")
+
+    csv_data = {
+        "ebs": [],
+        "eip": [],
+        "ec2": []
+    }
+
+    # EBS data
+    for ebs in full_report["ebs_volumes"]:
+        csv_data["ebs"].append({
+            "Volume ID": ebs["VolumeId"],
+            "Size (GB)": ebs["Size"],
+            "Type": ebs["Type"],
+            "Region": ebs["Region"]
+        })
+
+    # EIP data
+    for eip in full_report["elastic_ips"]:
+        csv_data["eip"].append({
+            "Public IP": eip["PublicIp"],
+            "Allocation ID": eip["AllocationId"],
+            "Region": eip["Region"]
+        })
+
+    # EC2 data
+    for ec2 in full_report["ec2_instances"]:
+        csv_data["ec2"].append({
+            "Instance ID": ec2["InstanceId"],
+            "Instance Type": ec2["InstanceType"],
+            "Avg CPU %": ec2["AvgCPU"],
+            "Region": ec2["Region"]
+        })
+
+    console.print("[green]CSV data ready![/green]")
+    return csv_data

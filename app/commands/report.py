@@ -5,6 +5,8 @@ Week 3 - Day 1-3:
 creating beautiful formatted
 tables and reports using Rich library
 """
+import csv
+import os
 
 import typer
 from rich.console import Console
@@ -277,3 +279,68 @@ def full_report(
         print_full_report(full_report_data)
     else:
         console.print("[red]Session fail![/red]")
+
+
+        
+def export_to_csv(csv_data, output_dir: str = "reports"):
+    """
+    Day 4: Data ko CSV files me export karo.
+    """
+    # Reports folder banao
+    os.makedirs(output_dir, exist_ok=True)
+
+    # EBS CSV
+    if csv_data["ebs"]:
+        ebs_file = os.path.join(output_dir, "ebs_report.csv")
+        with open(ebs_file, "w", newline="") as f:
+            writer = csv.DictWriter(
+                f, fieldnames=csv_data["ebs"][0].keys()
+            )
+            writer.writeheader()
+            writer.writerows(csv_data["ebs"])
+        console.print(f"[green] EBS Report saved: {ebs_file}[/green]")
+
+    # EIP CSV
+    if csv_data["eip"]:
+        eip_file = os.path.join(output_dir, "eip_report.csv")
+        with open(eip_file, "w", newline="") as f:
+            writer = csv.DictWriter(
+                f, fieldnames=csv_data["eip"][0].keys()
+            )
+            writer.writeheader()
+            writer.writerows(csv_data["eip"])
+        console.print(f"[green]EIP Report saved: {eip_file}[/green]")
+
+    # EC2 CSV
+    if csv_data["ec2"]:
+        ec2_file = os.path.join(output_dir, "ec2_report.csv")
+        with open(ec2_file, "w", newline="") as f:
+            writer = csv.DictWriter(
+                f, fieldnames=csv_data["ec2"][0].keys()
+            )
+            writer.writeheader()
+            writer.writerows(csv_data["ec2"])
+        console.print(f"[green] EC2 Report saved: {ec2_file}[/green]")
+
+    console.print(f"[cyan] All CSV files '{output_dir}'  in folder ![/cyan]")
+
+
+@report_app.command("export-csv")
+def export_csv(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region"),
+    output: str = typer.Option("reports", help="Output folder naam")
+):
+    """
+    Day 4: Scan results exporting in CSV.
+    """
+    console.print("[cyan] CSV Export starting...[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+
+    if session:
+        from app.scanner import generate_full_report, prepare_csv_data
+        full_report_data = generate_full_report(session, region)
+        csv_data = prepare_csv_data(full_report_data)
+        export_to_csv(csv_data, output)
+    else:
+        console.print("[red] Session fail![/red]")      

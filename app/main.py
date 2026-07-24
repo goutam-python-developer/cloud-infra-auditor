@@ -262,6 +262,55 @@ def export_csv(
         console.print("[red] Session fail![/red]")
 
 
+@app.command()
+def export_json(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region"),
+    output: str = typer.Option("reports", help="Output folder")
+):
+    """
+    Week 3 Day 5: JSON export karo.
+    """
+    from app.scanner import generate_full_report, prepare_json_data
+    from app.commands.report import export_to_json
+    console.print("[cyan]📄 JSON Export shuru...[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        full_report_data = generate_full_report(session, region)
+        json_data = prepare_json_data(full_report_data)
+        export_to_json(json_data, output)
+    else:
+        console.print("[red]❌ Session fail![/red]")
+
+
+@app.command()
+def export_all(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region"),
+    output: str = typer.Option("reports", help="Output folder")
+):
+    """
+    Week 3 Day 5: CSV and JSON both  exporting .
+    """
+    from app.scanner import (
+        generate_full_report,
+        prepare_csv_data,
+        prepare_json_data
+    )
+    from app.commands.report import export_to_csv, export_to_json
+    console.print("[cyan]Full Export starting...[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+    if session:
+        full_report_data = generate_full_report(session, region)
+        csv_data = prepare_csv_data(full_report_data)
+        export_to_csv(csv_data, output)
+        json_data = prepare_json_data(full_report_data)
+        export_to_json(json_data, output)
+        console.print("[green] CSV and JSON both are  exporting ![/green]")
+    else:
+        console.print("[red] Session fail![/red]")
+
+
 if __name__ == "__main__":
     app()
 main.py

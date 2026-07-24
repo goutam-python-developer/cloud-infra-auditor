@@ -173,3 +173,15 @@ python -m app.main report summary
 - export-csv command adding
 - Reports folder automatically created
 
+
+### Day 5: JSON Export 
+- Scan results export in  JSON file 
+- Report date and region metadata adding
+- Cost savings including in  JSON 
+- prepare_json_data() function created
+- export_to_json() function created
+- export-json command adding
+- export-all command adding
+- CSV and JSON  exporting both
+
+

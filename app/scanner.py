@@ -425,3 +425,38 @@ def prepare_csv_data(full_report):
 
     console.print("[green]CSV data ready![/green]")
     return csv_data
+
+
+
+def prepare_json_data(full_report):
+    """
+    Day 5: Data preparing for JSON export.
+    """
+    console.print("[cyan] JSON data preparing...[/cyan]")
+
+    import datetime
+
+    json_data = {
+        "report_date": datetime.datetime.utcnow().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
+        "region": full_report["metadata"]["region"],
+        "summary": {
+            "total_issues": full_report["metadata"]["total_issues"],
+            "unattached_ebs": full_report["metadata"]["summary"]["unattached_ebs"],
+            "idle_eips": full_report["metadata"]["summary"]["idle_eips"],
+            "underutilized_ec2": full_report["metadata"]["summary"]["underutilized_ec2"],
+        },
+        "cost_savings": {
+            "ebs_savings": full_report["cost_savings"]["ebs_savings"],
+            "eip_savings": full_report["cost_savings"]["eip_savings"],
+            "ec2_savings": full_report["cost_savings"]["ec2_savings"],
+            "total_savings": full_report["cost_savings"]["total_savings"],
+        },
+        "ebs_volumes": full_report["ebs_volumes"],
+        "elastic_ips": full_report["elastic_ips"],
+        "ec2_instances": full_report["ec2_instances"],
+    }
+
+    console.print("[green]JSON data ready![/green]")
+    return json_data    

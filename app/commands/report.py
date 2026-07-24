@@ -7,6 +7,8 @@ tables and reports using Rich library
 """
 import csv
 import os
+import json
+
 
 import typer
 from rich.console import Console
@@ -344,3 +346,77 @@ def export_csv(
         export_to_csv(csv_data, output)
     else:
         console.print("[red] Session fail![/red]")      
+
+
+def export_to_json(json_data, output_dir: str = "reports"):
+    """
+    Day 5: Data ko JSON file me export karo.
+    """
+    # Reports folder banao
+    os.makedirs(output_dir, exist_ok=True)
+
+    # JSON file banao
+    json_file = os.path.join(output_dir, "full_report.json")
+
+    with open(json_file, "w") as f:
+        json.dump(json_data, f, indent=4)
+
+    console.print(f"[green]✅ JSON Report saved: {json_file}[/green]")
+    console.print(
+        f"[cyan]📁 JSON file '{output_dir}' folder me hai![/cyan]"
+    )
+    return json_file
+
+
+@report_app.command("export-json")
+def export_json(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region"),
+    output: str = typer.Option("reports", help="Output folder naam")
+):
+    """
+    Day 5: Scan results JSON me export karo.
+    """
+    console.print("[cyan]📄 JSON Export shuru ho raha hai...[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+
+    if session:
+        from app.scanner import generate_full_report, prepare_json_data
+        full_report_data = generate_full_report(session, region)
+        json_data = prepare_json_data(full_report_data)
+        export_to_json(json_data, output)
+    else:
+        console.print("[red]❌ Session fail![/red]")
+
+
+@report_app.command("export-all")
+def export_all(
+    profile: str = typer.Option("default", help="AWS Profile"),
+    region: str = typer.Option("us-east-1", help="AWS Region"),
+    output: str = typer.Option("reports", help="Output folder naam")
+):
+    """
+    Day 5: CSV and  JSON  export starting.
+    """
+    console.print("[cyan]Full Export starting[/cyan]")
+    session = get_aws_session(profile=profile, region=region)
+
+    if session:
+        from app.scanner import (
+            generate_full_report,
+            prepare_csv_data,
+            prepare_json_data
+        )
+        full_report_data = generate_full_report(session, region)
+
+        # CSV export
+        csv_data = prepare_csv_data(full_report_data)
+        export_to_csv(csv_data, output)
+
+        # JSON export
+        json_data = prepare_json_data(full_report_data)
+        export_to_json(json_data, output)
+
+        console.print("[green]CSV and JSON both are  export![/green]")
+    else:
+        console.print("[red]Session fail![/red]")
